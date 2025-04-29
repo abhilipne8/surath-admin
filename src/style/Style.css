@@ -1,0 +1,70 @@
+/* Main container that covers the full screen height */
+.signup-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Ensures it fills the full screen height */
+    justify-content: center; /* Centers vertically */
+    align-items: center; /* Centers horizontally */
+}
+
+.upper-section {
+    background-color: #7000FF; /* Blue background */
+    height: 50vh; /* Keep this if you want a top section */
+    width: 100%; /* Ensure it covers the full width */
+    border-radius: 0px 0px 20px 20px;
+}
+
+.below-section {
+    background-color: #ffff;
+    height: 50vh; /* Keep this if you want a bottom section */
+    width: 100%; /* Ensure it covers the full width */
+}
+
+/* The signup card */
+.signup-card {
+    background-color: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 375px; /* Restrict the form width */
+    z-index: 1; /* Ensure the card is above the background sections */
+}
+
+.logo-img {
+    width: 90px; /* Set a specific width to make it small */
+    height: auto; /* Maintain the aspect ratio */
+    max-width: 100%; /* Ensure it fits within its container */
+}
+
+.secondary-back {
+    background-color: #F9F9F9;
+}
+
+.custom-table .ant-table-thead > tr > th {
+    background-color: #0f2462; /* Set your desired background color */
+    color: white; /* Optional: text color */
+    font-weight: bold;
+  }
+
+  /* @media (min-width: 1024px) {
+    .desktop-third-width {
+      flex: 0 0 33.333333%;
+      max-width: 33.333333%;
+      margin: 0 auto;
+    }
+  } */
+
+  .ant-table-filter-trigger {
+    color: white !important; /* Change filter icon color to white */
+  }
+  
+  .ant-table-filter-trigger:hover {
+    color: white !important; /* Ensure it stays white on hover */
+  }
+
+  .modal-dialog {
+    margin-left: 10%;
+  }
+  
+  
