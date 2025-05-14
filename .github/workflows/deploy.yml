@@ -26,7 +26,7 @@ jobs:
 
       # Build the app
       - name: Build app
-        run: npm run build
+        run: NODE_OPTIONS="--max_old_space_size=2048" npm run build
 
       # Set up SSH
       - name: Set up SSH
