@@ -4,6 +4,9 @@ FROM node:18-alpine AS build
 # Set the working directory inside the container
 WORKDIR /app
 
+# Increase Node.js memory limit to avoid heap crashes
+ENV NODE_OPTIONS=--max-old-space-size=2048
+
 # Copy package.json and package-lock.json
 COPY package*.json ./
 
