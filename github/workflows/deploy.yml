@@ -1,0 +1,59 @@
+name: Deploy Surath Admin
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the latest code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Set up Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      # Install dependencies
+      - name: Install dependencies
+        run: npm install
+
+      # Build the app
+      - name: Build app
+        run: npm run build
+
+      # Set up SSH
+      - name: Set up SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SERVER_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
+        env:
+          SERVER_SSH_KEY: ${{ secrets.SERVER_SSH_KEY }}
+          SERVER_IP: ${{ secrets.SERVER_IP }}
+
+      # Deploy to server
+      - name: Deploy to server
+        run: |
+          ssh -T -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+            git config --global --add safe.directory /opt/surath-apps/surath-admin
+            cd /opt/surath-apps/surath-admin || exit
+            git stash || true
+            git pull origin main || exit
+            git stash pop || true
+            npm install || exit
+            npm run build || exit
+            sudo chown -R www-data:www-data /opt/surath-apps/surath-admin || exit
+            sudo chmod -R 755 /opt/surath-apps/surath-admin || exit
+            sudo systemctl restart nginx || exit
+          EOF
+        env:
+          SERVER_USER: ${{ secrets.SERVER_USER }}
+          SERVER_IP: ${{ secrets.SERVER_IP }}
