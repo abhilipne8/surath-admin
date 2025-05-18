@@ -19,6 +19,8 @@ function AllDash() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [formValues, setFormValues] = useState({ bonusAmount: '', availableBalance: '' });
     const [selectedUser, setSelectedUser] = useState(null);
+    const [notifTitle, setNotifTitle] = useState('');
+    const [notifMessage, setNotifMessage] = useState('');
 
     const pageSize = 50;
 
@@ -320,6 +322,32 @@ function AllDash() {
       console.log("userId =>", userId)
     }
 
+    const handleSendNotification = async (e) => {
+      e.preventDefault();
+      console.log("=====>", notifTitle, notifMessage)
+      try {
+        const res = await fetch('http://localhost:6970/admin/notification', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ title: notifTitle, body: notifMessage }),
+        });
+      
+        const data = await res.json();
+        if (res.ok) {
+          alert('Notification sent successfully');
+          setNotifTitle('');
+          setNotifMessage('');
+        } else {
+          alert(data.message || 'Failed to send');
+        }
+      } catch (error) {
+        console.error('Notification error:', error);
+        alert('Something went wrong!');
+      }
+    };
+
     useEffect(() => {
       dispatch(getAllUserList({ page: currentPage, limit: pageSize, search }));
     }, [currentPage, search, dispatch]);
@@ -548,6 +576,62 @@ function AllDash() {
                 {/* user info modal  */}
 
             </div>
+        </div>
+        <div className="row">
+          <div className="col-6">
+            <div className='text-center my-4'>
+              <button
+                className="btn btn-success btn-sm"
+                data-bs-toggle="modal"
+                data-bs-target="#notification"
+              >
+                Send Notification
+              </button>
+            </div>
+
+            <div className="modal fade" id="notification" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+              <div className="modal-dialog">
+                <div className="modal-content">
+                  <form onSubmit={handleSendNotification}>
+                    <div className="modal-header">
+                      <h5 className="modal-title" id="exampleModalLabel">Send Push Notification</h5>
+                      <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div className="modal-body">
+                      <div className="mb-3">
+                        <label htmlFor="notifTitle" className="form-label">Title</label>
+                        <input
+                          type="text"
+                          id="notifTitle"
+                          className="form-control"
+                          value={notifTitle}
+                          onChange={(e) => setNotifTitle(e.target.value)}
+                          required
+                        />
+                      </div>
+                      <div className="mb-3">
+                        <label htmlFor="notifMessage" className="form-label">Message</label>
+                        <textarea
+                          id="notifMessage"
+                          className="form-control"
+                          rows="3"
+                          value={notifMessage}
+                          onChange={(e) => setNotifMessage(e.target.value)}
+                          required
+                        ></textarea>
+                      </div>
+                    </div>
+                    <div className="modal-footer">
+                      <button type="submit" className="btn btn-primary">Send</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="col-6">
+
+          </div>
         </div>
     </>
   )

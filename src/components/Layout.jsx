@@ -28,7 +28,7 @@ function Layout() {
 
   // Check if the user is Abhilipne
   const isAbhilipne =
-    adminEmail === 'abhilipne2017@gmail.com' &&
+    adminEmail === 'mobasirshaikh7204@gmail.com' &&
     adminMobile === '9130203486';
 
   // Menu items
