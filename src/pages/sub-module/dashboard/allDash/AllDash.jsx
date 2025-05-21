@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { addBankAccount, BankAccountStatusChange, editBankAccount, fetchAllBankAccounts } from '../../../../store/bankAccount/bankAccountSlice';
 import { Spinner } from 'reactstrap';
 import { getAllUserList, getUserBets, updateUser } from '../../../../store/user/userSlice';
+import api from '../../../../api/api';
 
 function AllDash() {
   const modalRef = useRef(null); // Reference to modal
@@ -324,27 +325,23 @@ function AllDash() {
 
     const handleSendNotification = async (e) => {
       e.preventDefault();
-      console.log("=====>", notifTitle, notifMessage)
+
       try {
-        const res = await fetch('http://localhost:6970/admin/notification', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ title: notifTitle, body: notifMessage }),
+        const response = await api.post('admin/notification', {
+          title: notifTitle,
+          body: notifMessage,
         });
       
-        const data = await res.json();
-        if (res.ok) {
-          alert('Notification sent successfully');
-          setNotifTitle('');
-          setNotifMessage('');
-        } else {
-          alert(data.message || 'Failed to send');
+        if (response.status !== 200) {
+          throw new Error('Failed to send notification');
         }
+      
+        alert('Notification sent successfully');
+        setNotifTitle('');
+        setNotifMessage('');
       } catch (error) {
         console.error('Notification error:', error);
-        alert('Something went wrong!');
+        alert(error.response?.data?.message || error.message || 'Something went wrong!');
       }
     };
 
