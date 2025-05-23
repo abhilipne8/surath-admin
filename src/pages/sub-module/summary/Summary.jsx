@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useHMSActions, useHMSStore, selectPeers, HMSRoomProvider } from '@100mslive/react-sdk';
 import './Summary.css';
 import api from '../../../api/api';
@@ -18,6 +18,7 @@ import hope from './../../../assets/hope.svg';
 import rabbit from './../../../assets/rabbit.svg';
 import { toast } from 'react-toastify';
 import { io } from 'socket.io-client';
+import beepSound from '../../../../public/car-beeping-1.mp3'
 
 const socket = io(import.meta.env.VITE_SOCKET_API_URL);
 
@@ -31,6 +32,7 @@ const Summary = React.memo(() => {
     const { settings, loading, error, resultLoading, endTime } = useSelector((state) => state.surath)
     const [timer, SetTimer] = useState()
     const [camera, setCamera] = useState('back'); // State to keep track of the current camera
+    const audioRef = useRef(null);
 
     const cardData = [
         { id: 'UMBRELLA', image: umbrella },
@@ -166,10 +168,16 @@ const Summary = React.memo(() => {
                 const now = Date.now();
                 const timeLeft = Math.max(0, Math.floor((endTime - now) / 1000));
                 SetTimer(timeLeft);
+
+                if (timeLeft === 1 && audioRef.current) {
+                    audioRef.current.play().catch(e => {
+                        console.warn("User interaction needed to allow audio.");
+                    });
+                }
             }
         };
 
-        calculateRemainingTime(); // Initial calculation
+        calculateRemainingTime();
         const intervalId = setInterval(calculateRemainingTime, 1000);
 
         return () => clearInterval(intervalId);
@@ -190,6 +198,7 @@ const Summary = React.memo(() => {
 
     return (
         <div className="summary-container row">
+         <audio ref={audioRef} src={beepSound} preload="auto" />
             <div className="col-md-6 col-12 text-center">
                 <div className="video-grid">
                     {peers.map((peer) => (
