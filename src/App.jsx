@@ -89,6 +89,8 @@ function App() {
             }
           />
         </Route>
+        {/* 🔁 Catch all unmatched routes */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
 
       {/* Toast container */}
