@@ -18,7 +18,7 @@ import hope from './../../../assets/hope.svg';
 import rabbit from './../../../assets/rabbit.svg';
 import { toast } from 'react-toastify';
 import { io } from 'socket.io-client';
-import beepSound from '../../../../public/car-beeping-1.mp3'
+// import beepSound from '../../../../public/car-beeping-1.mp3'
 
 const socket = io(import.meta.env.VITE_SOCKET_API_URL);
 
@@ -198,7 +198,7 @@ const Summary = React.memo(() => {
 
     return (
         <div className="summary-container row">
-         <audio ref={audioRef} src={beepSound} preload="auto" />
+         {/* <audio ref={audioRef} src={beepSound} preload="auto" /> */}
             <div className="col-md-6 col-12 text-center">
                 <div className="video-grid">
                     {peers.map((peer) => (

@@ -46,7 +46,7 @@ export const drawResult = createAsyncThunk(
 );
 
 export const fetchSessionInfo = createAsyncThunk('game/fetchSessionInfo', async () => {
-  const result = await api.get('/game/current-session');
+  const result = await api.get('/game/surath/current/session');
   return result.data.data;
 });
 

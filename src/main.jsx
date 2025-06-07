@@ -7,7 +7,7 @@ import { Provider } from 'react-redux';
 import { HMSRoomProvider } from '@100mslive/react-sdk';
 
 createRoot(document.getElementById('root')).render(
-  <BrowserRouter basename="/admin">
+  <BrowserRouter>
     <Provider store={store}>
       <HMSRoomProvider>
         <App />

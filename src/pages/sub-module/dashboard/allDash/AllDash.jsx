@@ -366,7 +366,7 @@ function AllDash() {
                     className="custom-table mt-2"
                     size="small"
                     columns={columns}
-                    scroll={{ x: 'max-content' }}
+                    scroll={{ x: 'max-content', y: 500 }}
                     pagination={{
                       pageSize: 10,
                       showSizeChanger: false,
@@ -496,12 +496,11 @@ function AllDash() {
                 </div>
             </div>
             <div className="col-md-6">
-                <h4 className='text-center my-4'>All User's Details</h4>
                 <Input
                   placeholder="Search by Refer Code or Phone"
                   value={search}
                   onChange={handleSearch}
-                  className="mb-2"
+                  className="mb-2 my-4"
                   style={{ width: '300px' }}
                 />
                 <Table
@@ -509,7 +508,7 @@ function AllDash() {
                     ...item,
                     key: item._id,
                   }))}
-                  className="custom-table mt-2"
+                  className="custom-table mt-3"
                   size="small"
                   columns={userColumn}
                   scroll={{ x: 'max-content', y: 500 }}
