@@ -3,7 +3,7 @@ import { useHMSActions, useHMSStore, selectPeers, HMSRoomProvider } from '@100ms
 import './Summary.css';
 import api from '../../../api/api';
 import { useDispatch, useSelector } from 'react-redux';
-import { drawResult, fetchSessionInfo, fetchSurathSettings, gameModeChange, setEndTime } from '../../../store/surath/surath';
+import { drawResult, fetchSessionbetAmount, fetchSessionInfo, fetchSurathSettings, gameModeChange, setEndTime, updateSessionId } from '../../../store/surath/surath';
 import umbrella from './../../../assets/umbrella.svg';
 import football from './../../../assets/football.svg';
 import sun from './../../../assets/sun.svg';
@@ -29,10 +29,12 @@ const Summary = React.memo(() => {
     const [selectedMode, setSelectedMode] = useState(null);
     const [selectedCard, setSelectedCard] = useState(null);
     const dispatch = useDispatch()
-    const { settings, loading, error, resultLoading, endTime } = useSelector((state) => state.surath)
+    const { settings, loading, error, resultLoading, endTime, sessionId } = useSelector((state) => state.surath)
     const [timer, SetTimer] = useState()
     const [camera, setCamera] = useState('back'); // State to keep track of the current camera
     const audioRef = useRef(null);
+    const hasFetchedRef = useRef(false);
+    const [sessionbetAmount, SetSessionbetAmount] = useState(null)
 
     const cardData = [
         { id: 'UMBRELLA', image: umbrella },
@@ -169,10 +171,18 @@ const Summary = React.memo(() => {
                 const timeLeft = Math.max(0, Math.floor((endTime - now) / 1000));
                 SetTimer(timeLeft);
 
-                if (timeLeft === 1 && audioRef.current) {
-                    audioRef.current.play().catch(e => {
-                        console.warn("User interaction needed to allow audio.");
-                    });
+                if (timeLeft === 0 && !hasFetchedRef.current) {
+                    hasFetchedRef.current = true; // Ensure it's called only once
+                    console.log("ABhi =>", sessionId)
+                    dispatch(fetchSessionbetAmount(sessionId))
+                    .unwrap()
+                    .then((data) => {
+                      SetSessionbetAmount(data.bets)
+                    })
+                }
+
+                if (timeLeft > 0 && hasFetchedRef.current) {
+                    hasFetchedRef.current = false; // Reset if a new session starts
                 }
             }
         };
@@ -185,7 +195,9 @@ const Summary = React.memo(() => {
 
     useEffect(() => {
         const handleSessionStarted = (sessionData) => {
+          dispatch(updateSessionId(sessionData.sessionId))
           const newEndTime = new Date(sessionData.endTime).getTime();
+          SetSessionbetAmount([])
           dispatch(setEndTime(newEndTime))
         };
       
@@ -280,16 +292,25 @@ const Summary = React.memo(() => {
                 <div className="card-container p-0 mt-4">
                     {cardData.map((card) => (
                         <div
-                            className={`p-0 d-flex flex-column card ${selectedCard === card.id ? 'selected-card' : ''}`}
-                            key={card.id}
-                            onClick={() => handleCardSelect(card.id)}
-                            style={{cursor: 'pointer'}}
+                          className={`p-0 d-flex flex-column mt-1 align-items-center ${selectedCard === card.id ? 'selected-card' : ''}`}
+                          key={card.id}
+                          onClick={() => handleCardSelect(card.id)}
+                          style={{ cursor: 'pointer' }}
                         >
-                            <div className="card p-2 position-relative d-flex justify-content-center align-items-center" style={{backgroundColor: selectedCard === card.id ?'#edc01c' : ''}}>
-                                <div className="d-flex justify-content-center align-items-center w-100 h-100">
-                                    <img src={card.image} alt={card.id} />
-                                </div>
+                          {/* Bet Amount Display */}
+                          <span className="text-danger fw-bold" style={{ height: '25px' }}>
+                            {sessionbetAmount?.find((item) => item.card === card.id)?.amount || ''}
+                          </span>
+                                            
+                          {/* Card Image */}
+                          <div
+                            className="card p-2 position-relative d-flex justify-content-center align-items-center"
+                            style={{ backgroundColor: selectedCard === card.id ? '#edc01c' : '' }}
+                          >
+                            <div className="d-flex justify-content-center align-items-center w-100 h-100">
+                              <img src={card.image} alt={card.id} />
                             </div>
+                          </div>
                         </div>
                     ))}
                 </div>

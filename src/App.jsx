@@ -65,7 +65,7 @@ function App() {
 
           {/* Dashboards Route */}
           <Route
-            path="dashboard/all-dash"
+            path="dashboard"
             element={
               <AuthenticatedRoute>
                 <AllDash />

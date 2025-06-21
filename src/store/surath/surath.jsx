@@ -57,6 +57,12 @@ export const fetchSessionbetAmount = createAsyncThunk('game/getSessionBets', asy
   return result.data;
 });
 
+export const fetchSurathAllSessions = createAsyncThunk('surath/all-sessions', async (sessionId, { rejectWithValue }) => {
+  const result = await api.get('/admin/surath/all-sessions', { gameSessionId: sessionId});
+  console.log("dataaaaaaa =>", result.data)
+  return result.data;
+});
+
 // Initial state for the settings slice
 const initialState = {
   settings: null, // Added a state to hold the fetched settings
@@ -65,6 +71,7 @@ const initialState = {
   resultLoading: false,
   sessionRemainder: null,
   endTime: null,
+  sessionId: null
 };
 
 // Surath slice definition
@@ -75,6 +82,10 @@ const surathSlice = createSlice({
     // Define actions here if needed
     setEndTime: (state, action) => { // New reducer
       state.endTime = action.payload;
+    },
+    updateSessionId: (state, action) => { // New reducer
+      console.log("Store =>", action.payload)
+      state.sessionId = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -122,29 +133,24 @@ const surathSlice = createSlice({
         state.loading = true
       })
       .addCase(fetchSessionInfo.fulfilled, (state, action) => {
+        console.log("current =>", action.payload.sessionId)
         const endTime = new Date(action.payload.endTime).getTime(); // Store endTime as timestamp
         state.endTime = endTime;
         state.sessionRemainder = action.payload.sessionRemainder; 
+        state.sessionId = action.payload.sessionId
         state.loading = false
 
       })
       .addCase(fetchSessionInfo.rejected, (state, action) => {
         state.loading = false
       })
-      .addCase(fetchSessionbetAmount.pending, (state, action) => {
-        state.loading = true
-      })
       .addCase(fetchSessionbetAmount.fulfilled, (state, action) => {
-        state.loading = false
-
-      })
-      .addCase(fetchSessionbetAmount.rejected, (state, action) => {
         state.loading = false
       })
   },
 });
 
-export const { setEndTime } = surathSlice.actions;
+export const { setEndTime, updateSessionId } = surathSlice.actions;
 
 // Export reducer
 export default surathSlice.reducer;

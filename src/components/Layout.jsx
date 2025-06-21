@@ -54,12 +54,12 @@ function Layout() {
       label: 'Dashboard',
       children: [
         {
-          key: '/dashboard/all-dash',
-          label: 'All Dash',
+          key: '/dashboard',
+          label: 'Dashboard',
         },
         {
           key: '/dashboard/surath-dash',
-          label: 'Surath Dash',
+          label: 'Session Info',
         },
         {
           key: '/dashboard/color-dash',

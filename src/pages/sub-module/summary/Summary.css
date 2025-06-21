@@ -33,7 +33,6 @@ video {
 .card-container {
     display: grid;
     grid-template-columns: repeat(6, 1fr); /* 5 columns by default */
-    gap: 20px; /* Space between cards */
     justify-content: center;
     padding: 10px;
   }
