@@ -3,7 +3,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 
 const api = axios.create({
-  baseURL: 'https://sorathgaming.online/api',
+  baseURL: 'https://sorathgaming.fun/api',
 });
 
 // Request Interceptor to Attach Token

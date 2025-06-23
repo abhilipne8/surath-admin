@@ -6,6 +6,7 @@ import surathReducer from './surath/surath'
 import bankAccountsReducer from './bankAccount/bankAccountSlice'
 import userReducer from './user/userSlice'
 import dragonTigerReducer from './games/dragon-tiger/dragonTigerSlice'
+import andarBaharReducer from './games/andar-bahar/andarBaharSlice'
 
 const store = configureStore({
   reducer: {
@@ -15,7 +16,8 @@ const store = configureStore({
     surath:surathReducer,
     bankAccounts: bankAccountsReducer,
     user: userReducer,
-    dragonTiger: dragonTigerReducer
+    dragonTiger: dragonTigerReducer,
+    andarBahar: andarBaharReducer
   },
   // devTools: import.meta.env.NODE_ENV !== 'production',
 });
