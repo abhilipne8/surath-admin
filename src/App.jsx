@@ -11,7 +11,6 @@ import 'react-toastify/dist/ReactToastify.css';
 // import Dashboard from './pages/sub-module/dashboard/Dashboard';
 import SurathDash from './pages/sub-module/dashboard/suarthDash/SurathDash';
 import AllDash from './pages/sub-module/dashboard/allDash/AllDash';
-import ColorDash from './pages/sub-module/dashboard/colorDash/ColorDash';
 
 function App() {
   const token = localStorage.getItem('authToken'); // Adjusted token key
@@ -77,14 +76,6 @@ function App() {
             element={
               <AuthenticatedRoute>
                 <SurathDash />
-              </AuthenticatedRoute>
-            }
-          />
-          <Route
-            path="dashboard/color-dash"
-            element={
-              <AuthenticatedRoute>
-                <ColorDash />
               </AuthenticatedRoute>
             }
           />

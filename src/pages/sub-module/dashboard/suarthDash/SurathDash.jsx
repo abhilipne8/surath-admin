@@ -7,15 +7,15 @@ function SurathDash() {
   return (
     <div>
       <div className="row">
-        <div className="col-sm-4">
+        {/* <div className="col-sm-4">
           Surath Session
           <Surath />
-        </div>
-        <div className="col-sm-4">
+        </div> */}
+        <div className="col-sm-6">
           Dragon Tiger session
           <DragonTiger />
         </div>
-        <div className="col-sm-4">
+        <div className="col-sm-6">
           Andar Bahar Session
           <AndarBahar />
         </div>
