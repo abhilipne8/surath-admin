@@ -12,11 +12,15 @@ function SurathDash() {
           <Surath />
         </div> */}
         <div className="col-sm-6">
-          Dragon Tiger session
+          <div className='d-flex justify-content-center mb-2'>
+            <b className='text-danger'>Dragon Tiger session</b>
+          </div>
           <DragonTiger />
         </div>
         <div className="col-sm-6">
-          Andar Bahar Session
+          <div className='d-flex justify-content-center mb-2'>
+            <b className='text-danger'>Andar Bahar Session</b>
+          </div>
           <AndarBahar />
         </div>
       </div>
