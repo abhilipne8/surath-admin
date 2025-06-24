@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Input, Table, Row, Col, Statistic, Spin, DatePicker } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import dayjs from 'dayjs';
-import moment from 'moment-timezone';
 import {
   fetchAndarBaharSessions,
   fetchAndarBaharDailyStats,
