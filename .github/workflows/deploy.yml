@@ -1,4 +1,4 @@
-name: Deploy Surath Admin
+name: Build and Deploy Surath Admin
 
 on:
   push:
@@ -6,56 +6,41 @@ on:
       - main
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout the latest code
-      - name: Checkout code
+      - name: Checkout Code
         uses: actions/checkout@v3
 
-      # Set up Node.js
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
+      - name: Log in to DockerHub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
-      # Install dependencies
-      - name: Install dependencies
-        run: npm install
+      - name: Build and Push Docker Image
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/sorath-admin:latest .
+          docker push ${{ secrets.DOCKER_USERNAME }}/sorath-admin:latest
 
-      # Build the app
-      - name: Build app
-        run: npm run build
-        env:
-          NODE_OPTIONS: "--max_old_space_size=4096"
-
-      # Set up SSH
       - name: Set up SSH
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.SERVER_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
-        env:
-          SERVER_SSH_KEY: ${{ secrets.SERVER_SSH_KEY }}
-          SERVER_IP: ${{ secrets.SERVER_IP }}
 
-      # Deploy to server
-      - name: Deploy to server
+      - name: Deploy to VPS
         run: |
-          ssh -T -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
-            git config --global --add safe.directory /opt/surath-apps/surath-admin
-            cd /opt/surath-apps/surath-admin || exit
-            git stash || true
-            git pull origin main || exit
-            git stash pop || true
-            npm install || exit
-            npm run build || exit
-            sudo chown -R www-data:www-data /opt/surath-apps/surath-admin || exit
-            sudo chmod -R 755 /opt/surath-apps/surath-admin || exit
-            sudo systemctl restart nginx || exit
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << EOF
+            echo "🔄 Pulling latest Docker image..."
+            docker pull ${{ secrets.DOCKER_USERNAME }}/sorath-admin:latest
+
+            echo "🛑 Stopping old container..."
+            docker stop surath-admin || true
+            docker rm surath-admin || true
+
+            echo "🚀 Running new container..."
+            docker run -d --name surath-admin -p 8081:80 --restart always ${{ secrets.DOCKER_USERNAME }}/sorath-admin:latest
+
+            echo "🔁 Restarting Nginx..."
+            sudo systemctl restart nginx
           EOF
-        env:
-          SERVER_USER: ${{ secrets.SERVER_USER }}
-          SERVER_IP: ${{ secrets.SERVER_IP }}
