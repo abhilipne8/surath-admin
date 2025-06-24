@@ -18,8 +18,8 @@ jobs:
 
       - name: Build and Push Docker Image
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/sorath-admin:latest .
-          docker push ${{ secrets.DOCKER_USERNAME }}/sorath-admin:latest
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/surath-admin:latest .
+          docker push ${{ secrets.DOCKER_USERNAME }}/surath-admin:latest
 
       - name: Set up SSH
         run: |
@@ -32,14 +32,14 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << EOF
             echo "🔄 Pulling latest Docker image..."
-            docker pull ${{ secrets.DOCKER_USERNAME }}/sorath-admin:latest
+            docker pull ${{ secrets.DOCKER_USERNAME }}/surath-admin:latest
 
             echo "🛑 Stopping old container..."
             docker stop surath-admin || true
             docker rm surath-admin || true
 
             echo "🚀 Running new container..."
-            docker run -d --name surath-admin -p 8081:80 --restart always ${{ secrets.DOCKER_USERNAME }}/sorath-admin:latest
+            docker run -d --name surath-admin -p 8081:80 --restart always ${{ secrets.DOCKER_USERNAME }}/surath-admin:latest
 
             echo "🔁 Restarting Nginx..."
             sudo systemctl restart nginx
