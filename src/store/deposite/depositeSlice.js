@@ -6,7 +6,7 @@ export const fetchDepositeList = createAsyncThunk(
   "deposite/fetchDeposites",
   async ({ status , page, limit, search }, { rejectWithValue }) => {
     try {
-      const response = await api.get("/payment/all-deposit-requests", {
+      const response = await api.get("/transaction/all-deposit-requests", {
         params: { status, page, limit, search }, // Include pagination parameters
       });
       return response.data; // Assuming response.data contains { data: [], pagination: { totalRecords } }
