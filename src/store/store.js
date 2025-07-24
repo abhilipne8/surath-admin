@@ -2,6 +2,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import withdrawalReducer from './withdrawal/withdrawalListSlice'
 import authReducer from './auth/authSlice'
 import depositeReducer from './deposite/depositeSlice'
+import upiDepositeReducer from './deposite/upiDepositeSlice'
 import surathReducer from './surath/surath'
 import bankAccountsReducer from './bankAccount/bankAccountSlice'
 import userReducer from './user/userSlice'
@@ -17,7 +18,8 @@ const store = configureStore({
     bankAccounts: bankAccountsReducer,
     user: userReducer,
     dragonTiger: dragonTigerReducer,
-    andarBahar: andarBaharReducer
+    andarBahar: andarBaharReducer,
+    upiDeposite: upiDepositeReducer
   },
   // devTools: import.meta.env.NODE_ENV !== 'production',
 });

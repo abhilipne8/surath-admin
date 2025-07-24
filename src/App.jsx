@@ -11,6 +11,7 @@ import 'react-toastify/dist/ReactToastify.css';
 // import Dashboard from './pages/sub-module/dashboard/Dashboard';
 import SurathDash from './pages/sub-module/dashboard/suarthDash/SurathDash';
 import AllDash from './pages/sub-module/dashboard/allDash/AllDash';
+import UpiDeposite from './pages/sub-module/deposite/UpiDeposite';
 
 function App() {
   const token = localStorage.getItem('authToken'); // Adjusted token key
@@ -49,7 +50,8 @@ function App() {
             path="deposite-list"
             element={
               <AuthenticatedRoute>
-                <DepositeList />
+                {/* <DepositeList /> */}
+                <UpiDeposite />
               </AuthenticatedRoute>
             }
           />
