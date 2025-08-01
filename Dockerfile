@@ -1,5 +1,5 @@
 # Step 1: Use a Node image to build the app
-FROM node:18-alpine AS build
+FROM node:20-alpine AS build
 
 WORKDIR /app
 ENV NODE_OPTIONS=--max-old-space-size=2048
