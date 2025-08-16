@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Input, Table, Row, Col, Statistic, Spin, DatePicker } from 'antd';
+import { Input, Table, Row, Col, Statistic, Spin, DatePicker, Radio, message } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import dayjs from 'dayjs';
 import {
   fetchAndarBaharSessions,
   fetchAndarBaharDailyStats,
+  getAndarBaharSessionMode,
+  setAndarBaharSessionMode
 } from '../../../../../store/games/andar-bahar/andarBaharSlice';
 
 function AndarBahar() {
@@ -19,6 +21,7 @@ function AndarBahar() {
     totalSessions,
     dailyStats,
     statsLoading,
+    sessionMode,
   } = useSelector((state) => state.andarBahar);
 
   const [pagination, setPagination] = useState({
@@ -26,7 +29,7 @@ function AndarBahar() {
     pageSize: 10,
   });
 
-  // Fetch sessions and stats when date or search changes
+  // 🔹 Fetch sessions, stats & mode
   useEffect(() => {
     const formattedDate = date.format('YYYY-MM-DD');
     dispatch(fetchAndarBaharSessions({
@@ -35,6 +38,7 @@ function AndarBahar() {
       searchText,
     }));
     dispatch(fetchAndarBaharDailyStats(formattedDate));
+    dispatch(getAndarBaharSessionMode()); // 🔥 get mode on mount
   }, [dispatch, pagination.current, pagination.pageSize, searchText, date]);
 
   const handleSearch = (value) => {
@@ -59,6 +63,17 @@ function AndarBahar() {
     }
   };
 
+  const handleModeChange = (e) => {
+    const mode = e.target.value;
+    dispatch(setAndarBaharSessionMode(mode)).unwrap()
+      .then((res) => {
+        message.success(res.data.message || `Mode set to ${mode}`);
+      })
+      .catch((err) => {
+        message.error(err || 'Failed to change mode');
+      });
+  };
+
   const filteredData = sessions.filter((item) =>
     item.sessionId.toString().includes(searchText)
   );
@@ -77,32 +92,46 @@ function AndarBahar() {
     <div>
       <div className='d-flex justify-content-center align-items-center flex-column'>
         <DatePicker
-            value={date}
-            onChange={handleDateChange}
-            format="YYYY-MM-DD"
-            allowClear={false}
-          />
-          <Spin spinning={statsLoading}>
-            <Row gutter={30} className="mb-1 mt-2">
-              <Col>
-                <Statistic
-                  title="Total Bet (₹)"
-                  value={dailyStats.totalBetAmount}
-                  precision={2}
-                />
-              </Col>
-              <Col>
-                <Statistic
-                  title="Total Win (₹)"
-                  value={dailyStats.totalWinningAmount}
-                  precision={2}
-                />
-              </Col>
-            </Row>
-          </Spin>
+          value={date}
+          onChange={handleDateChange}
+          format="YYYY-MM-DD"
+          allowClear={false}
+        />
+
+        {/* 🔥 Session Mode Switch */}
+        <div className='mt-2'>
+          <Radio.Group
+            value={sessionMode.mode}
+            onChange={handleModeChange}
+            disabled={sessionMode.loading}
+          >
+            <Radio value="automatic">Automatic</Radio>
+            <Radio value="manual">Manual</Radio>
+          </Radio.Group>
+        </div>
+
+        <Spin spinning={statsLoading}>
+          <Row gutter={30} className="mb-1 mt-2">
+            <Col>
+              <Statistic
+                title="Total Bet (₹)"
+                value={dailyStats.totalBetAmount}
+                precision={2}
+              />
+            </Col>
+            <Col>
+              <Statistic
+                title="Total Win (₹)"
+                value={dailyStats.totalWinningAmount}
+                precision={2}
+              />
+            </Col>
+          </Row>
+        </Spin>
       </div>
+
       <Input
-        className='mb-2 mt-0'
+        className='mb-2 mt-2'
         placeholder="Search by Session ID"
         value={searchText}
         onChange={(e) => handleSearch(e.target.value)}

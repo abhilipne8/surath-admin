@@ -5,14 +5,14 @@ import dayjs from 'dayjs';
 import {
   fetchDragonTigerSessions,
   fetchDragonTigerDailyStats,
-  setDragonTigerSessionMode
+  setDragonTigerSessionMode,
+  getDragonTigerSessionMode,
 } from '../../../../../store/games/dragon-tiger/dragonTigerSlice';
 
 function DragonTiger() {
   const dispatch = useDispatch();
   const [searchText, setSearchText] = useState('');
   const [date, setDate] = useState(dayjs());
-  const [selectedMode, setSelectedMode] = useState('');
 
   const {
     sessions,
@@ -27,6 +27,7 @@ function DragonTiger() {
     pageSize: 10,
   });
 
+  // ✅ Fetch sessions + daily stats
   useEffect(() => {
     const formattedDate = date.format('YYYY-MM-DD');
     dispatch(fetchDragonTigerSessions({
@@ -37,10 +38,10 @@ function DragonTiger() {
     dispatch(fetchDragonTigerDailyStats(formattedDate));
   }, [dispatch, pagination.current, pagination.pageSize, searchText, date]);
 
+  // ✅ Fetch session mode on mount
   useEffect(() => {
-    // Set local state from Redux (you may add a get API to fetch mode if needed)
-    setSelectedMode(sessionMode.mode);
-  }, [sessionMode.mode]);
+    dispatch(getDragonTigerSessionMode());
+  }, [dispatch]);
 
   const handleSearch = (value) => {
     setSearchText(value.trim());
@@ -66,7 +67,6 @@ function DragonTiger() {
 
   const handleModeChange = (e) => {
     const newMode = e.target.value;
-    setSelectedMode(newMode);
     dispatch(setDragonTigerSessionMode(newMode));
   };
 
@@ -109,7 +109,7 @@ function DragonTiger() {
           <h3>Session Mode</h3>
           {sessionMode.loading && <p>Loading settings...</p>}
           {sessionMode.error && <p className="text-danger">Error: {sessionMode.error}</p>}
-          {selectedMode ? (
+          {sessionMode.mode ? (
             <div className='d-flex justify-content-center mt-3'>
               <div className="form-check">
                 <input
@@ -118,7 +118,7 @@ function DragonTiger() {
                   name="sessionMode"
                   id="automaticMode"
                   value="automatic"
-                  checked={selectedMode === 'automatic'}
+                  checked={sessionMode.mode === 'automatic'}
                   onChange={handleModeChange}
                 />
                 <label className="form-check-label" htmlFor="automaticMode">
@@ -132,7 +132,7 @@ function DragonTiger() {
                   name="sessionMode"
                   id="manualMode"
                   value="manual"
-                  checked={selectedMode === 'manual'}
+                  checked={sessionMode.mode === 'manual'}
                   onChange={handleModeChange}
                 />
                 <label className="form-check-label" htmlFor="manualMode">
