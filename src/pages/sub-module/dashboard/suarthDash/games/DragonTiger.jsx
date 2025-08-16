@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Input, Table, Row, Col, Statistic, Spin, DatePicker } from 'antd';
+import { Input, Table, Row, Col, Statistic, Spin, DatePicker, message } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import dayjs from 'dayjs';
 import {
@@ -67,7 +67,14 @@ function DragonTiger() {
 
   const handleModeChange = (e) => {
     const newMode = e.target.value;
-    dispatch(setDragonTigerSessionMode(newMode));
+    dispatch(setDragonTigerSessionMode(newMode))
+      .unwrap()
+      .then((res) => {
+        message.success(res.data.message || `Mode set to ${newMode}`);
+      })
+      .catch((err) => {
+        message.error(err || 'Failed to change mode');
+      });
   };
 
   const filteredData = sessions.filter((item) =>
