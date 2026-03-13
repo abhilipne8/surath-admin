@@ -28,8 +28,8 @@ function Layout() {
 
   // Check if the user is Abhilipne
   const isAbhilipne =
-    adminEmail === 'mobasirshaikh7204@gmail.com' &&
-    adminMobile === '9130203486';
+    adminEmail === 'mobasir@gmail.com' &&
+    adminMobile === '9999999999';
 
   // Menu items
   const menuItems = [

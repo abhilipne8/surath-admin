@@ -13,8 +13,13 @@ const AuthenticatedRoute = ({ children }) => {
     adminMobile === '7219015613';
 
   const isAbhilipne =
-    adminEmail === 'mobasirshaikh7204@gmail.com' &&
-    adminMobile === '9130203486';
+    adminEmail === 'mobasir@gmail.com' &&
+    adminMobile === '9999999999';
+
+    console.log("AuthenticatedRoute - Admin Email:", adminEmail);
+    console.log("AuthenticatedRoute - Admin Mobile:", adminMobile);
+    console.log("AuthenticatedRoute - Is Sunil:", isSunil);
+    console.log("AuthenticatedRoute - Is Abhilipne:", isAbhilipne); 
 
   if (!token) {
     // Redirect to login if no token (user is not authenticated)
