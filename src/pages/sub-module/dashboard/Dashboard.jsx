@@ -21,7 +21,7 @@ import rabbit from './../../../assets/rabbit.svg';
 //   withCredentials: true,
 // });
 
-const socket = io(import.meta.env.VITE_SOCKET_API_URL);
+const socket = io("https://api.pappuplaying.online/");
 
 function Dashboard() {
   const dispatch = useDispatch()
