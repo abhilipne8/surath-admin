@@ -20,7 +20,7 @@ import { toast } from 'react-toastify';
 import { io } from 'socket.io-client';
 // import beepSound from '../../../../public/car-beeping-1.mp3'
 
-const socket = io(import.meta.env.VITE_SOCKET_API_URL);
+const socket = io("https://api.pappuplaying.online/");
 
 const Summary = React.memo(() => {
     const hmsActions = useHMSActions();
