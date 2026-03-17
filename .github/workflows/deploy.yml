@@ -1,11 +1,11 @@
-name: Deploy Admin
+name: 🚀 Release Admin Deploy
 
 on:
-  push:
-    branches: ["main"]
+  release:
+    types: [published]
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
@@ -18,23 +18,29 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
+      # 🔹 Build & Push (always runs)
       - name: Build & Push Image
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/surath-admin:latest .
-          docker push ${{ secrets.DOCKER_USERNAME }}/surath-admin:latest
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/surath-admin:${{ github.event.release.tag_name }} .
+          
+          for i in 1 2 3; do
+            docker push ${{ secrets.DOCKER_USERNAME }}/surath-admin:${{ github.event.release.tag_name }} && break || sleep 10
+          done
 
-      - name: Deploy on EC2
+      # 🔹 Deploy ONLY if NOT prerelease
+      - name: Deploy to EC2
+        if: github.event.release.prerelease == false
         uses: appleboy/ssh-action@v0.1.6
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            docker pull ${{ secrets.DOCKER_USERNAME }}/surath-admin:latest
+            docker pull ${{ secrets.DOCKER_USERNAME }}/surath-admin:${{ github.event.release.tag_name }}
 
             docker stop surath-admin || true
             docker rm surath-admin || true
 
             docker run -d -p 8081:80 \
               --name surath-admin \
-              ${{ secrets.DOCKER_USERNAME }}/surath-admin:latest
+              ${{ secrets.DOCKER_USERNAME }}/surath-admin:${{ github.event.release.tag_name }}
